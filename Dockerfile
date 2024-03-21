@@ -7,10 +7,10 @@ RUN apt-get update && apt-get install -y \
   nodejs
 
 # Set working directory
-WORKDIR /app
+WORKDIR /src
 
 # Copy Gemfile and Gemfile.lock
-COPY Gemfile Gemfile.lock ./
+COPY ./src/Gemfile ./src/Gemfile.lock ./
 
 # Install gems
 RUN bundle install

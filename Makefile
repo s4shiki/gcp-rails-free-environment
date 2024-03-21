@@ -10,10 +10,10 @@ install-gcloud:
 
 create-project:
 	@echo "Creating new Rails project..."
-	docker compose run web rails new . --force --database=postgresql
 	docker compose build
+	docker compose run web rails new . --force --database=postgresql
 	@echo "Copying database.yml file..."
-	cp database.yml.example config/database.yml
+	cp ./src/database.yml.example ./src/config/database.yml
 	@echo "Creating database..."
 	docker compose run web rails db:create
 
