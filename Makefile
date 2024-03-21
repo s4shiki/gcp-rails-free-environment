@@ -13,7 +13,7 @@ create-project:
 	docker compose build
 	docker compose run web rails new . --force --database=postgresql
 	@echo "Copying database.yml file..."
-	cp ./src/database.yml.example ./src/config/database.yml
+	cp ./database.yml.example ./src/config/database.yml
 	@echo "Creating database..."
 	docker compose run web rails db:create
 
