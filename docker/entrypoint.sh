@@ -1,13 +1,11 @@
 #!/bin/bash
 set -e
 
-# データベースが起動するまで待機
-# wait-for-it.sh db:5432 -- echo "Database is up"
+# データベースが起動するまで待つ処理（必要に応じて）
 
 # データベースマイグレーションを実行
-# マイグレーションは Makefile で既に実行しているため、本番環境や他の環境でのみ必要な場合に実行
-# echo "Running database migrations..."
-# rails db:migrate
+echo "Running database migrations..."
+bin/rails db:migrate
 
 # Railsサーバーを起動
 echo "Starting Rails server..."
