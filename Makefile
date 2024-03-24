@@ -1,32 +1,44 @@
-setup:
-	# コンテナをビルド
-	docker-compose build
-	# Rails アプリケーションを生成
-	docker-compose run --rm web rails new . --force --database=postgresql --skip-bundle
-	# Gemfileが更新されたので再ビルド
-	docker-compose build
-	# コピーする設定ファイルがあればここで実行
-	make copy-config
-	# コンテナを起動
-	docker-compose up -d
-	# データベースの作成とマイグレーション
-	docker-compose run --rm web rails db:create db:migrate
+init-project:
+	@echo "新規Railsプロジェクトの作成を開始します..."
+	mkdir -p myapp
+	if [ -z "$$(ls -A myapp)" ]; then \
+		docker-compose run --no-deps web rails new . --force --database=postgresql --skip-bundle --skip-javascript --skip-turbolinks --skip-hotwire; \
+		echo "Dockerイメージをビルドします..."; \
+		docker-compose build; \
+		cp -f .env.example .env; \
+		cp -f rails_config/database.yml.example ./myapp/config/database.yml; \
+		echo "データベースを作成します..."; \
+		docker-compose run --rm web rake db:create; \
+		docker-compose run --rm web rake db:migrate; \
+		echo "新規プロジェクトのセットアップが完了しました。"; \
+	else \
+		echo "myappディレクトリが既に存在します。新規プロジェクトは作成されませんでした。"; \
+	fi
 
-copy-config:
-	# 必要な設定ファイルをコピー
-	cp -f docker/database.yml config/database.yml
-
-
-# データベースの作成、マイグレーション、シードデータの投入
-db-setup:
-	docker-compose exec web rails db:create db:migrate db:seed
-
-# コンテナのビルドと起動
 up:
 	docker-compose up -d
 
-# コンテナの停止と削除
 down:
 	docker-compose down
 
-.PHONY: setup copy-config
+create-db:
+	docker-compose run --rm web rake db:create
+
+migrate-db:
+	docker-compose run --rm web rake db:migrate
+
+reset-db:
+	docker-compose run --rm web rake db:drop db:create db:migrate
+
+seed-db:
+	docker-compose run --rm web rake db:seed
+
+test:
+	docker-compose run --rm web rake test
+
+console:
+	docker-compose run --rm web rails console
+
+logs:
+	docker-compose logs -f web
+
