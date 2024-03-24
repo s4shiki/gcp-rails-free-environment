@@ -35,7 +35,7 @@ jobs:
 
       - name: Setup database
         run: |
-          cp config/database.yml.example config/database.yml
+          #cp config/database.yml.example config/database.yml
           # ここでデータベース設定を調整
           bundle exec rake db:create db:schema:load
 

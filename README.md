@@ -1,71 +1,49 @@
 # GCP Rails Free Starter
 
-この文書は、`gcp-rails-free-starter`のセットアップと使用方法について説明します。この Rails アプリケーションは、Docker を使用してローカル開発環境を構築し、PostgreSQL をデータベースとして使用します。
+このプロジェクトは、Docker を使用してローカル開発環境を構築し、PostgreSQL をデータベースとして使用する Rails 7 アプリケーションのスターターテンプレートです。
 
 ## 前提条件
 
-- Docker がインストールされていること
-- Docker Compose がインストールされていること
+- Docker と Docker Compose がシステムにインストールされていること。
 
 ## セットアップ手順
 
-プロジェクトをセットアップするには、以下の手順に従ってください。
+### プロジェクトのクローン
 
-1. **リポジトリのクローン**
+GitHub からプロジェクトをクローンします:
 
-   ```bash
-   git clone https://github.com/your-username/gcp-rails-free-starter.git
-   cd gcp-rails-free-starter
-   ```
+```bash
+git clone https://github.com/your-username/gcp-rails-free-starter.git
+cd gcp-rails-free-starter
+```
 
-2. **環境のビルド**
+### 初期セットアップの実行
 
-   Makefile を使用して環境をビルドします。
+プロジェクトの初期セットアップを行います。これには、Docker イメージのビルド、新規 Rails プロジェクトの作成、データベースのセットアップが含まれます:
 
-   ```bash
-   make setup
-   ```
+```
+make init-project
+```
 
-   これにより、Docker イメージがビルドされ、必要な Gem がインストールされ、データベースが作成され、マイグレーションが実行されます。
+### アプリケーションの起動
 
-3. **アプリケーションの起動**
+```
+docker-compose up
+```
 
-   アプリケーションを起動するには、以下のコマンドを実行します。
+アプリケーションが起動したら、ブラウザで http://localhost:3000 にアクセスして、Rails のウェルカムページが表示されることを確認します。
 
-   ```bash
-   make up
-   ```
+### Makefile コマンド
 
-   これにより、アプリケーションがポート 3000 で起動します。
+プロジェクトにはいくつかの便利な Makefile コマンドが含まれています:
 
-4. **アクセス**
-
-   ブラウザを開いて `http://localhost:3000` にアクセスします。Rails のウェルカムページが表示されれば、セットアップは成功です。
-
-## データベースのセットアップ
-
-データベースを初期化し、シードデータを投入するには、以下のコマンドを実行します。
-
-    ```bash
-    make db-setup
-    ```
-
-## その他のコマンド
-
-- **コンテナの停止と削除**
-
-  ```bash
-  make **down**
-  ```
-
-- **データベース設定の更新**
-
-  必要に応じてデータベースの設定を更新するには、以下のコマンドを実行します。
-
-  ```bash
-  make update-db-config
-  ```
-
-## ライセンス
-
-このプロジェクトは[MIT ライセンス](LICENSE)の下で公開されています。
+- make init-project: プロジェクトの初期セットアップを実行します。
+- make up: Docker コンテナをバックグラウンドで起動します。
+- make down: 起動中の Docker コンテナを停止し、削除します。
+- make create-db: 新しいデータベースを作成します。
+- make migrate-db: データベースマイグレーションを実行します。
+- make reset-db: データベースをリセットし、再度マイグレーションを実行します。
+- make seed-db: データベースにシードデータを投入します。
+- make test: テストを実行します。
+- make console: Rails コンソールを開始します。
+- make logs: Docker コンテナのログを表示します。

@@ -1,19 +1,24 @@
 init-project:
-	@echo "新規Railsプロジェクトの作成を開始します..."
-	mkdir -p myapp
-	if [ -z "$$(ls -A myapp)" ]; then \
-		docker-compose run --no-deps web rails new . --force --database=postgresql --skip-bundle --skip-javascript --skip-turbolinks --skip-hotwire; \
-		echo "Dockerイメージをビルドします..."; \
-		docker-compose build; \
-		cp -f .env.example .env; \
-		cp -f rails_config/database.yml.example ./myapp/config/database.yml; \
-		echo "データベースを作成します..."; \
-		docker-compose run --rm web rake db:create; \
-		docker-compose run --rm web rake db:migrate; \
-		echo "新規プロジェクトのセットアップが完了しました。"; \
+	if [ ! -d "myapp" ]; then \
+			mkdir -p myapp/config; \
+			cp -f .env.example .env; \
+			docker-compose build; \
+			docker-compose run web bash -c '\
+					cd ./myapp && \
+					gem install rails && \
+					rails new . -d postgresql && \
+					bundle install && \
+					cp -f ../rails_config/database.yml.example config/database.yml && \
+					echo "データベースを作成します..." && \
+					rake db:create && \
+					ls -al && \
+					echo "新規プロジェクトのセットアップが完了しました。" \
+			'; \
 	else \
-		echo "myappディレクトリが既に存在します。新規プロジェクトは作成されませんでした。"; \
+			echo "myappディレクトリが既に存在します。新規プロジェクトは作成されませんでした。"; \
 	fi
+
+
 
 up:
 	docker-compose up -d
