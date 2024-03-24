@@ -1,0 +1,43 @@
+name: Rails CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:latest
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: password
+        ports:
+          - 5432:5432
+        # 必要に応じてPostgreSQLサービスの設定を調整
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.2
+
+      - name: Install dependencies
+        run: |
+          gem install bundler
+          bundle install
+
+      - name: Setup database
+        run: |
+          cp config/database.yml.example config/database.yml
+          # ここでデータベース設定を調整
+          bundle exec rake db:create db:schema:load
+
+      - name: Run tests
+        run: bundle exec rake test
