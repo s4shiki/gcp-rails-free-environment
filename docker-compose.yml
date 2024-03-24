@@ -1,29 +1,28 @@
 version: "3.8"
-
 services:
   db:
-    image: postgres
+    image: postgres:latest
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - postgres-data:/var/lib/postgresql/data
     environment:
-      POSTGRES_PASSWORD: password # 例として直接記述。本番環境では .env ファイルから読み込む
-      POSTGRES_USER: user
-      POSTGRES_DB: myapp_development
-
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
   web:
-    build:
-      context: .
-      dockerfile: docker/Dockerfile # 修正箇所
-    command: bash -c "rm -f tmp/pids/server.pid && rails s -p 3000 -b '0.0.0.0'"
+    build: .
+    command: bash -c "rm -f tmp/pids/server.pid && bundle exec rails s -p 3000 -b '0.0.0.0'"
     volumes:
-      - .:/app
+      - .:/myapp
+      - bundle_data:/usr/local/bundle
     ports:
       - "3000:3000"
     depends_on:
       - db
     environment:
-      RAILS_ENV: development
-      DATABASE_URL: postgresql://user:password@db/myapp_development # 例として直接記述
-
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      DB_HOST: ${DB_HOST}
 volumes:
-  postgres_data:
+  postgres-data:
+  bundle_data:
